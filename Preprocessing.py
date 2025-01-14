@@ -25,6 +25,42 @@ def NaN_Check(df):
     nan_counts = df.isnull().sum() 
     print(nan_counts)
 
+# Function to check and update the payload 
+def update_payload_RF(row): 
+    if row['RemoteFrame'] == 1 and pd.isna(row['Payload']): 
+        # check for remote frame and NaN payload 
+        return 'ff ff ff ff ff ff ff ff' 
+    return row['Payload'] 
+
+# Define a function to pad the Payload
+def pad_payload(row):
+    if row['RemoteFrame'] == 0 and row['DLC'] < 8:
+        payload = row['Payload'].split()
+        # Pad with 'ff' up to 8 bytes
+        payload.extend(['ff'] * (8 - len(payload)))
+        return ' '.join(payload)
+    return row['Payload']
+
+def hex_to_binary(payload):
+    """
+    Convert a hexadecimal payload string to a binary string.
+
+    Args:
+        payload (str): A space-separated string of hexadecimal values.
+
+    Returns:
+        str: A binary representation of the payload, or None if invalid input.
+    """
+    try:
+        # Split the hex payload into bytes
+        hex_bytes = payload.split()
+        # Convert each byte to binary and zero-pad to 8 bits
+        binary_bytes = [format(int(byte, 16), '08b') for byte in hex_bytes]
+        # Join the binary bytes with no spaces
+        return ''.join(binary_bytes)
+    except ValueError as e:
+        print(f"Invalid payload: {payload}. Error: {e}")
+        return None  # Return None for invalid input
 
 def Process(df, name):
     print(f"preprocessing function of {name} dataframe")
@@ -37,6 +73,7 @@ def Process(df, name):
 
     # Convert 'RemoteFrame' column to 0 for '000' and 1 for '100' 
     df['RemoteFrame'] = df['RemoteFrame'].replace({100: 1, 000: 0})
+
     # Print the RemoteFrame column alone 
     print(df['RemoteFrame'])
 
@@ -49,17 +86,60 @@ def Process(df, name):
     df = df.drop(columns=['Timestamp'])
     print(df)
 
+    # Convert the ID column to binary encoding 
+    #df['ID_binary'] = df['ID'].apply(lambda x: format(int(x, 16), '012b'))
+    df['ID'] = df['ID'].apply(lambda x: format(int(x, 16), '012b'))
+
+    # Apply the padding function
+    df['Payload'] = df.apply(pad_payload, axis=1)
+    
+    # Apply the function to the RemoteFrame 
+    df['Payload'] = df.apply(update_payload_RF, axis=1)
+    print(df)
+
+    NaN_Check(df)
+
     # Export DataFrame to CSV 
-    df.to_csv('output1.csv', index=False) 
-    print("DataFrame exported successfully to output.csv")
+    # df.to_csv('output1.csv', index=False) 
+    # print("DataFrame exported successfully to output1.csv")
 
-    # Perform One-Hot Encoding on the ID column 
-    df_one_hot_encoded = pd.get_dummies(df, columns=['ID'], prefix='ID') 
-    # Display the DataFrame 
-    print(df_one_hot_encoded)
+    # Apply the conversion function to the Payload column
+    #df['PayloadBinary'] = df['Payload'].apply(hex_to_binary)
+    df['Payload'] = df['Payload'].apply(hex_to_binary)
 
-        # Export DataFrame to CSV 
-    df_one_hot_encoded.to_csv('output2.csv', index=False) 
-    print("DataFrame exported successfully to output.csv")
+    # Convert TimeInterval and InterArrival to microseconds
+    df["TimeInterval"] = (df["TimeInterval"] * 1_000_000).astype(int)
+    df["InterArrival"] = (df["InterArrival"] * 1_000).astype(int) #ms
+
+    # Format TimeInterval as strings with leading zeros to always have 3 digits
+    df["TimeInterval"] = df["TimeInterval"].apply(lambda x: f"{x:04d}")
+    df["InterArrival"] = df["InterArrival"].apply(lambda x: f"{x:04d}")
+
+    # Export DataFrame to CSV 
+    # df.to_csv('output2.csv', index=False) 
+    # print("DataFrame exported successfully to output2.csv")
+
+    # Drop the 'InterArrival' column 
+    df = df.drop(columns=['InterArrival'])
+
+    # Convert DLC and TimeInterval to binary
+    df['DLC'] = df['DLC'].apply(lambda x: format(x, '04b'))  # Pad to 8 bits
+    #df['TimeInterval'] = df['TimeInterval'].apply(lambda x: format(x, '016b'))  # Pad to 16 bits
+    df['TimeInterval'] = df['TimeInterval'].astype(int)  # Convert to integers
+    print(f"The Max value of Time Interval in {name}: ", df['TimeInterval'].max())
+    df['TimeInterval'] = df['TimeInterval'].apply(lambda x: format(x, '013b'))  # Pad to 16 bits
+
+    NaN_Check(df)
+
+    # Export DataFrame to CSV 
+    df.to_csv(f'{name.replace(" ", "")}_output.csv', index=False) 
+    print(f"DataFrame exported successfully to {name}_output.csv")
+
 
 Process(dos_attack, "DoS Attack")
+Process(attack_free, "Attack Free")
+Process(fuzzy_attack, "Fuzzy Attack")
+Process(impersonation_attack, "Impersonation Attack")
+
+
+    
