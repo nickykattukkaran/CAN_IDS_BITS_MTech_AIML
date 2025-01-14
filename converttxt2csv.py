@@ -6,8 +6,8 @@ from datetime import datetime
 input_dir = r"OTIDS_Dataset"  # Directory where input files are stored
 
 # Dynamically create a folder to store CSV files
-timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')  # Current timestamp
-output_dir = f"CSV_Converted_{timestamp}"  # Folder name with timestamp
+#timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')  # Current timestamp
+output_dir = f"CSV_Converted"#_{timestamp}"  # Folder name with timestamp
 os.makedirs(output_dir, exist_ok=True)  # Create the folder if it doesn't exist
 
 print("Processing the data...")
