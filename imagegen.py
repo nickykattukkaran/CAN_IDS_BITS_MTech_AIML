@@ -16,26 +16,6 @@ dos_attack = load_data(dos_attack_file)
 fuzzy_attack = load_data(fuzzy_attack_file)
 impersonation_attack = load_data(impersonation_attack_file)
 
-attack_type = ["Attack_free", "Dos_Attack", "Fuzzy_Attack", "Impersonate_Attack"]
-dataframes_list = [attack_free, dos_attack, fuzzy_attack, impersonation_attack]
-totalimg = []
-train = []
-test = []
-
-def train_test_count():
-    for i in range(len(attack_type)):
-        num_rows, _ = dataframes_list[i].shape
-        num_images = num_rows // 94
-        train_img = (int(num_images*0.8))
-        test_img = num_images - train_img
-        totalimg.append(num_images)
-        train.append(train_img)
-        test.append(test_img)
-        print(f"The Total images in {attack_type[i]}: ", totalimg[i])
-        print(f"The Train images in {attack_type[i]}: ", train[i])
-        print(f"The Test images in {attack_type[i]}: ", test[i])
-        print("*"*50)
-    #return attack_type, totalimg, train, test
 
 def generate_binary_images(df, output_folder):
     """
@@ -71,9 +51,9 @@ def create_binary_images(df, output_folder):
     print(num_rows, num_cols)
     num_images = num_rows // 94
     train_img_num = int(num_images*0.8)
-    print(f"Total Number of Images in {output_folder}:", num_images)
-    print(f"Number of  Training Images in {output_folder}:", train_img_num)
-    print(f"Number of  Testing Images in {output_folder}:", (num_images-train_img_num))
+    print(f"Total Number of Images in {output_folder}: "+str(num_images)+"   from 0 to "+str(num_images-1))
+    print(f"Number of  Training Images in {output_folder}: "+str(train_img_num)+" from 0 to "+str(train_img_num))
+    print(f"Number of  Testing Images in {output_folder}: "+str(num_images-train_img_num)+" from "+ str(train_img_num+1)+ "to "+str(num_images-1))
     
     for i in range(num_images):
         # Combine 94 consecutive rows
@@ -101,6 +81,7 @@ def create_binary_images(df, output_folder):
             image.save(os.path.join(f'{root_folder}/{output_folder}/train', f"{output_folder}_{i}.jpg"))
         else:
             image.save(os.path.join(f'{root_folder}/{output_folder}/test', f"{output_folder}_{i}.jpg"))
+
     print(f'The Images of {output_folder} are successfully Stored in {root_folder}/{output_folder}')
 
 # Create the folder structure to store the images
@@ -116,6 +97,28 @@ generate_binary_images(df_attack_free, subfolders[0])
 generate_binary_images(df_dos_attack, subfolders[1])
 generate_binary_images(df_fuzzy_attack, subfolders[2])
 generate_binary_images(df_imper_attack, subfolders[3])
+
+attack_type = ["Attack_free", "Dos_Attack", "Fuzzy_Attack", "Impersonate_Attack"]
+dataframes_list = [df_attack_free, df_dos_attack, df_fuzzy_attack, df_imper_attack]
+totalimg = []
+train = []
+test = []
+
+def train_test_count():
+    for i in range(len(attack_type)):
+        num_rows, _ = dataframes_list[i].shape
+        num_images = num_rows // 94
+        train_img = (int(num_images*0.8))
+        test_img = num_images - train_img
+        totalimg.append(num_images)
+        train.append(train_img)
+        test.append(test_img)
+        print(f"The Total images in {attack_type[i]}: "+str(totalimg[i])+"   from 0 to "+str(totalimg[i]-1))
+        print(f"The Train images in {attack_type[i]}: "+str(train[i])+" from 0 to "+str(train[i]))
+        print(f"The Test images in {attack_type[i]}: "+str(test[i])+" from "+ str(train[i]+1)+ " to "+str(totalimg[i]-1))
+    
+        print("*"*50)
+    #return attack_type, totalimg, train, test
 
 #Details of generated Total Images, Trainimages and Test images 
 train_test_count()
