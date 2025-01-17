@@ -65,10 +65,14 @@ def hex_to_binary(payload):
 
 def Process(df, name):
     print(f"preprocessing function of {name} dataframe")
-    print(df.head())
+    #print(df.head())
     # Calculate the time interval between consecutive rows 
     df['TimeInterval'] = df['Timestamp'].diff().fillna(0)
-    print(df)
+    # Filter rows where TimeInterval <= 0.008
+    df = df[df['TimeInterval'].astype(float) <= 0.008]
+    #print(df)
+    #df.to_csv('demo.csv', index=False) 
+    
     # Check for NaN values in each column 
     NaN_Check(df)
 
@@ -76,7 +80,7 @@ def Process(df, name):
     df['RemoteFrame'] = df['RemoteFrame'].replace({100: 1, 000: 0})
 
     # Print the RemoteFrame column alone 
-    print(df['RemoteFrame'])
+    #print(df['RemoteFrame'])
 
     # Remove the first character from the 'ID' column values 
     df['ID'] = df['ID'].apply(lambda x: x[1:] if len(x) > 1 else x)
@@ -85,10 +89,9 @@ def Process(df, name):
     
     # Drop the 'Timestamp' column 
     df = df.drop(columns=['Timestamp'])
-    print(df)
+    #print(df)
 
     # Convert the ID column to binary encoding 
-    #df['ID_binary'] = df['ID'].apply(lambda x: format(int(x, 16), '012b'))
     df['ID'] = df['ID'].apply(lambda x: format(int(x, 16), '012b'))
 
     # Apply the padding function
@@ -96,16 +99,15 @@ def Process(df, name):
     
     # Apply the function to the RemoteFrame 
     df['Payload'] = df.apply(update_payload_RF, axis=1)
-    print(df)
+    #print(df)
 
     NaN_Check(df)
 
-    # Export DataFrame to CSV 
+    #Export DataFrame to CSV 
     # df.to_csv('output1.csv', index=False) 
     # print("DataFrame exported successfully to output1.csv")
 
     # Apply the conversion function to the Payload column
-    #df['PayloadBinary'] = df['Payload'].apply(hex_to_binary)
     df['Payload'] = df['Payload'].apply(hex_to_binary)
 
     # Convert TimeInterval and InterArrival to microseconds
@@ -125,7 +127,7 @@ def Process(df, name):
 
     # Convert DLC and TimeInterval to binary
     df['DLC'] = df['DLC'].apply(lambda x: format(x, '04b'))  # Pad to 8 bits
-    #df['TimeInterval'] = df['TimeInterval'].apply(lambda x: format(x, '016b'))  # Pad to 16 bits
+
     df['TimeInterval'] = df['TimeInterval'].astype(int)  # Convert to integers
     print(f"The Max value of Time Interval in {name}: ", df['TimeInterval'].max())
     df['TimeInterval'] = df['TimeInterval'].apply(lambda x: format(x, '013b'))  # Pad to 16 bits
