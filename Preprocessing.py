@@ -1,11 +1,12 @@
 import pandas as pd
 from sklearn.preprocessing import OneHotEncoder
+import os
 
-# Load the datasets
-attack_free_file = r"CSV_Converted\Attack_free_dataset.csv"
-dos_attack_file = r"CSV_Converted\DoS_attack_dataset.csv"
-fuzzy_attack_file = r"CSV_Converted\Fuzzy_attack_dataset.csv"
-impersonation_attack_file = r"CSV_Converted\Impersonation_attack_dataset.csv"
+# # Load the datasets
+# attack_free_file = r"CSV_Converted/Attack_free_dataset.csv"
+# dos_attack_file = r"CSV_Converted/DoS_attack_dataset.csv"
+# fuzzy_attack_file = r"CSV_Converted/Fuzzy_attack_dataset.csv"
+# impersonation_attack_file = r"CSV_Converted/Impersonation_attack_dataset.csv"
 
 # Load CSV files
 def load_data(file_path):
@@ -15,10 +16,10 @@ def load_data(file_path):
         print(f"Error loading {file_path}: {e}")
         return None
     
-attack_free = load_data(attack_free_file)
-dos_attack = load_data(dos_attack_file)
-fuzzy_attack = load_data(fuzzy_attack_file)
-impersonation_attack = load_data(impersonation_attack_file)
+# attack_free = load_data(attack_free_file)
+# dos_attack = load_data(dos_attack_file)
+# fuzzy_attack = load_data(fuzzy_attack_file)
+# impersonation_attack = load_data(impersonation_attack_file)
 
 # Check for NaN values in each column 
 def NaN_Check(df):
@@ -132,14 +133,20 @@ def Process(df, name):
     NaN_Check(df)
 
     # Export DataFrame to CSV 
-    df.to_csv(f'{name.replace(" ", "")}_output.csv', index=False) 
-    print(f"DataFrame exported successfully to {name}_output.csv")
+    df.to_csv(f'PreprocessedData_CSV/{name.replace(" ", "")}_output.csv', index=False) 
+    print(f"DataFrame exported successfully to PreprocessedData_CSV/{name}_output.csv")
+
+    return df
 
 
-Process(dos_attack, "DoS Attack")
-Process(attack_free, "Attack Free")
-Process(fuzzy_attack, "Fuzzy Attack")
-Process(impersonation_attack, "Impersonation Attack")
+output_folder = "PreprocessedData_CSV"
+if not os.path.exists(output_folder):
+    os.makedirs(output_folder)
+
+# Process(dos_attack, "DoS Attack")
+# Process(attack_free, "Attack Free")
+# Process(fuzzy_attack, "Fuzzy Attack")
+# Process(impersonation_attack, "Impersonation Attack")
 
 
     

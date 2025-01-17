@@ -3,10 +3,10 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # Load the datasets
-attack_free_file = r"CSV_Converted\Attack_free_dataset.csv"
-dos_attack_file = r"CSV_Converted\DoS_attack_dataset.csv"
-fuzzy_attack_file = r"CSV_Converted\Fuzzy_attack_dataset.csv"
-impersonation_attack_file = r"CSV_Converted\Impersonation_attack_dataset.csv"
+attack_free_file = r"CSV_Converted/Attack_free_dataset.csv"
+dos_attack_file = r"CSV_Converted/DoS_attack_dataset.csv"
+fuzzy_attack_file = r"CSV_Converted/Fuzzy_attack_dataset.csv"
+impersonation_attack_file = r"CSV_Converted/Impersonation_attack_dataset.csv"
 
 # Load CSV files
 def load_data(file_path):
