@@ -182,18 +182,18 @@ def plot_can_id_counts(can_id_counts_between_frames, name):
 # Perform analysis on all datasets
 def analyze_dataset(df, name):
     if df is not None:
-        can_id_distribution(df, name)
-        dataset_summary(df, name)
-        analyze_id_distribution(df, name)
-        analyze_timestamps(df, name)
-        analyze_dlc_distribution(df, name)
-        analyze_time_intervals(df, name)
-        analyze_payload(df, name)
-        analyze_remote_frames(df, name)
-        plot_can_id_counts(CanId_Between_RemoteFrames(df, name), name)
+#         can_id_distribution(df, name)
+         dataset_summary(df, name)
+#         analyze_id_distribution(df, name)
+#         analyze_timestamps(df, name)
+#         analyze_dlc_distribution(df, name)
+#         analyze_time_intervals(df, name)
+#         analyze_payload(df, name)
+#         analyze_remote_frames(df, name)
+#         plot_can_id_counts(CanId_Between_RemoteFrames(df, name), name)
 
-# Run analysis
-#analyze_dataset(attack_free, "Attack Free")
+# # Run analysis
+analyze_dataset(attack_free, "Attack Free")
 analyze_dataset(dos_attack, "DoS Attack")
-#analyze_dataset(fuzzy_attack, "Fuzzy Attack")
-#analyze_dataset(impersonation_attack, "Impersonation Attack")
+analyze_dataset(fuzzy_attack, "Fuzzy Attack")
+analyze_dataset(impersonation_attack, "Impersonation Attack")

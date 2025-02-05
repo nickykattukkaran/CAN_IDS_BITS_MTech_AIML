@@ -68,10 +68,17 @@ def Process(df, name):
     #print(df.head())
     # Calculate the time interval between consecutive rows 
     df['TimeInterval'] = df['Timestamp'].diff().fillna(0)
+
+    count = (df['TimeInterval'] > 0.008).sum() 
+    print("count > 0.008 is :", count)
+
     # Filter rows where TimeInterval <= 0.008
-    df = df[df['TimeInterval'].astype(float) <= 0.008]
-    #print(df)
-    #df.to_csv('demo.csv', index=False) 
+    #df = df[df['TimeInterval'].astype(float) <= 0.008]
+    
+    # Ensure df is an independent copy after filtering
+    df = df[df['TimeInterval'].astype(float) <= 0.008].copy()
+    # print(df)
+    # df.to_csv('demo.csv', index=False) 
     
     # Check for NaN values in each column 
     NaN_Check(df)
@@ -113,22 +120,25 @@ def Process(df, name):
     # Convert TimeInterval and InterArrival to microseconds
     df["TimeInterval"] = (df["TimeInterval"] * 1_000_000).astype(int)
     df["InterArrival"] = (df["InterArrival"] * 1_000).astype(int) #ms
+    print(f"The Max value of Time Interval in {name}: ", df['TimeInterval'].max())
+    max_index = df['TimeInterval'].idxmax() 
+    print("max_index : ", max_index)
 
     # Format TimeInterval as strings with leading zeros to always have 3 digits
-    df["TimeInterval"] = df["TimeInterval"].apply(lambda x: f"{x:04d}")
-    df["InterArrival"] = df["InterArrival"].apply(lambda x: f"{x:04d}")
+    #df["TimeInterval"] = df["TimeInterval"].apply(lambda x: f"{x:04d}")
+    #df["InterArrival"] = df["InterArrival"].apply(lambda x: f"{x:04d}")
 
-    # Export DataFrame to CSV 
+    #Export DataFrame to CSV 
     # df.to_csv('output2.csv', index=False) 
     # print("DataFrame exported successfully to output2.csv")
 
     # Drop the 'InterArrival' column 
     df = df.drop(columns=['InterArrival'])
 
-    # Convert DLC and TimeInterval to binary
+    # Convert DLC to binary
     df['DLC'] = df['DLC'].apply(lambda x: format(x, '04b'))  # Pad to 8 bits
 
-    df['TimeInterval'] = df['TimeInterval'].astype(int)  # Convert to integers
+    #df['TimeInterval'] = df['TimeInterval'].astype(int)  # Convert to integers
     print(f"The Max value of Time Interval in {name}: ", df['TimeInterval'].max())
     df['TimeInterval'] = df['TimeInterval'].apply(lambda x: format(x, '013b'))  # Pad to 16 bits
 
