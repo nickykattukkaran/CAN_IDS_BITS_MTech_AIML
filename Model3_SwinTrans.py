@@ -171,10 +171,10 @@ fuzzy_attack_train_images, fuzzy_attack_train_labels = load_images_from_folder('
 impersonate_attack_train_images, impersonate_attack_train_labels = load_images_from_folder('Genimage/Impersonate_Attack/train', 3)
 
 # Perform data augmentation
-attack_free_train_images, attack_free_train_labels = augment_data(attack_free_train_images, attack_free_train_labels, 9000)
-dos_attack_train_images, dos_attack_train_labels = augment_data(dos_attack_train_images, dos_attack_train_labels, 9000)
-fuzzy_attack_train_images, fuzzy_attack_train_labels = augment_data(fuzzy_attack_train_images, fuzzy_attack_train_labels, 9000)
-impersonate_attack_train_images, impersonate_attack_train_labels = augment_data(impersonate_attack_train_images, impersonate_attack_train_labels, 9000)
+attack_free_train_images, attack_free_train_labels = augment_data(attack_free_train_images, attack_free_train_labels, 10000)
+dos_attack_train_images, dos_attack_train_labels = augment_data(dos_attack_train_images, dos_attack_train_labels, 10000)
+fuzzy_attack_train_images, fuzzy_attack_train_labels = augment_data(fuzzy_attack_train_images, fuzzy_attack_train_labels, 10000)
+impersonate_attack_train_images, impersonate_attack_train_labels = augment_data(impersonate_attack_train_images, impersonate_attack_train_labels, 10000)
  
 train_images.extend(attack_free_train_images)
 train_labels.extend(attack_free_train_labels)
