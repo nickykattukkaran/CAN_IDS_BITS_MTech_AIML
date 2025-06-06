@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.optim as optim
 from torchvision import transforms
 from PIL import Image
-import os
+import time
 
 # Define the CNN architecture
 class CNN(nn.Module):
@@ -29,7 +29,7 @@ class CNN(nn.Module):
 
 # Load the saved model
 model = CNN()
-model.load_state_dict(torch.load('model.pth', weights_only=True))
+model.load_state_dict(torch.load('model1_DeepCNN.pth', weights_only=True))
 model.eval()
 
 # Define transformation for the input image
@@ -49,7 +49,12 @@ def classify_image(image_path):
     return predicted.item()
 
 # Classify the binary image in the test folder
-image_path = 'test/image_0.jpg'  # Adjust the path as needed
+start_time_infer = time.time()
+image_path = 'test/Dos_Attack_6982.jpg'  # Adjust the path as needed
 attack_classes = ['Attack_free', 'Dos_Attack', 'Fuzzy_Attack', 'Impersonate_Attack']
 predicted_class = classify_image(image_path)
-print(f"The binary image Belongs to Attack Free and the model classified it as: {attack_classes[predicted_class]}")
+#print(f"The binary image Belongs to Attack Free and the model classified it as: {attack_classes[predicted_class]}")
+print(f'Predicted class: {attack_classes[predicted_class]}')
+end_time_infer = time.time()
+time_infer = (end_time_infer - start_time_infer)
+print(f"Time required for inference (CNN Model): {time_infer:.3f} s")
